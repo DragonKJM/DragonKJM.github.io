@@ -1995,6 +1995,27 @@ input, select, textarea {
 				font-size: 1em;
 			}
 
+/* Videos */
+
+.video {
+	max-width: 100%;
+	margin: 0 auto;
+	padding: 0 2em;
+}
+
+	.video iframe {
+		width: 100%;
+		aspect-ratio: 16 / 9;
+		border: 0;
+		display: block;
+	}
+
+/* Centred List */
+	.CentredList{
+		display: inline-block;
+		text-align: left;
+	}
+
 /* Icons */
 
 	.icon {

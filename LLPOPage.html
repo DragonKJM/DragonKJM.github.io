@@ -1,0 +1,173 @@
+<!DOCTYPE HTML>
+
+<html>
+<head>
+    <title>Kieran's Portfolio - LLPO</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <link rel="stylesheet" href="assets/css/main.css" />
+</head>
+<body class="is-preload">
+
+    <!-- Header -->
+    <div id="header">
+
+        <div class="top">
+
+            <!-- Logo -->
+            <div id="logo">
+                <span class="image avatar48"><img src="images/avatar.jpg" alt="" /></span>
+                <h1 id="title">Kieran Marsden</h1>
+                <p>Games Programmer</p>
+            </div>
+
+            <!-- Nav -->
+            <nav id="nav">
+                <ul>
+                    <li><a href="index.html" id="top-link"><span class="icon solid fa-home">Home</span></a></li>
+                </ul>
+            </nav>
+
+        </div>
+
+        <div class="bottom">
+
+            <!-- Social Icons -->
+            <ul class="icons">
+                <!--<li><a href="#" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
+                <li><a href="#" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>-->
+                <li><a href="https://www.linkedin.com/in/kieran-marsden/" target="_blank" class="icon brands fa-linkedin"><span class="label">Github</span></a></li>
+                <li><a href="https://github.com/DragonKJM" target="_blank" class="icon brands fa-github"><span class="label">Github</span></a></li>
+                <!--<li><a href="#" class="icon brands fa-dribbble"><span class="label">Dribbble</span></a></li>-->
+                <li><a href="mailto:kieranjmarsden@gmail.com" class="icon solid fa-envelope"><span class="label">Email</span></a></li>
+            </ul>
+
+        </div>
+
+    </div>
+
+    <!-- Main -->
+    <div id="main">
+
+
+        <!-- Portfolio -->
+        <section id="Video" class="two">
+            <div class="container">
+
+                <header class="item">
+                    <h2>Low Level Platform Optimisation</h2>
+                </header>
+
+                <header>
+                    <h3><u>The Video</u></h3>
+                </header>
+
+                <div class="row">
+
+                    <div class="col-12 col-12-mobile">
+
+                        <article class="video">
+                            <iframe
+                                    src="https://www.youtube.com/embed/0vX_YmmsqUE" title="Low-Level Platform Optimisation Demo"
+                                    frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                    referrerpolicy="strict-origin-when-cross-origin" allowfullscreen>
+                            </iframe>
+                        </article>
+
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+
+        <!-- About Me -->
+        <section id="about" class="three">
+            <div class="container">
+
+                <header>
+                    <h3><u>The Explanation</u></h3>
+                </header>
+
+                <p>
+                    This is a low-level memory tracking and allocation program, which was also ported to the PS5. It focuses on optimisation of basic physics resolution via spatial partitioning, safe threading, and cache reuse.
+                    I also used it for experimentation between different pooling methods, heap walking, and iterating through the use of profiling tools.
+                </p>
+
+                <p><strong><u>Features:</u></strong></p>
+
+                <ul class="CentredList">
+                    <li>Job-based threading</li>
+                    <li>Memory tracking, pooling, and corruption detection</li>
+                    <li>Hybrid allocation (per-frame vs permanent pools)</li>
+                    <li>Cache-friendly data layouts and access patterns</li>
+                </ul>
+
+                <p><strong><u>Project Analysis and Conclusion:</u></strong></p>
+
+                <p>
+                    This project has been incredibly useful for learning and practicing techniques to optimise code that, in larger codebases, are much more difficult to integrate.
+                    It allowed me to both theorise and prove effective methods in a general program in terms of memory, caching, and common optimisations such as spatial partitioning
+                    and threading, as well as seeing the impact that such optimisations can have. It was also useful for understanding how the memory is being controlled under the hood,
+                    and how to take control of that memory through new overrides and manual freeing, as well as how this allows for further optimisation through pre-allocating large chunks
+                    of memory, and storing related objects next to one another in memory to utilise the power of cache lines, to avoid cache misses. <br /><br />
+
+                    I'm especially happy with how my gridding system works, where, whilst the majority of the optimisation comes from spatial partitioning itself, I further optimised it beyond
+                    this. Whilst most implementations would reassign each object to its respective region every frame, my system gives full control to the cells themselves and they handle movement
+                    between one another on a need-to-do basis. This avoids an entire iteration through the objects as, now, objects will always be assigned to their proper cell as they move to it.
+                    Of course, as the system is also threaded, it meant that this had to be handled safely, which also meant some overhead as I make use of a mutex rather than having attempted a lockless
+                    system, though I believe the small cost of the overhead is strongly outweighed by the time saved from what would be an assignment loop. One of the more advanced spatial partitioning
+                    techniques would have been an oct or quadtree. I didn't go for this method as a dynamic grid would also make it very difficult for the assignment method to work as stated, but it would
+                    also make it more difficult to assign threads properly - you can no longer simply assign a thread to a given number of regions, as there's no telling how many regions there will be and how much
+                    work each will contain. This means that the easiest solution is to create a job for every potential cell, which could cause overhead with some threads performing locks and checks on empty cells,
+                    whilst others take the bulk of the work - though this is similar to what can happen in many spatial partitioning methods anyway, other static systems can assign one job per a collection of cells
+                    much easier, allowing some negation of this. <br /><br />
+
+                    A major part of the program that I think could be improved would be the pooling system. The pools themselves are completely functional, but I'm not happy with how they assign
+                    objects to themselves. First off, I have the objects themselves request access to the pool passed to it and, upon failure, will put themselves on the heap. I don't think this
+                    is a pleasant way of dealing with the pool, especially as the number of classes increases. This led down from my attempts to have the objects automatically deal with everything
+                    using new overrides, for me to realise that a global new and delete wasn't good enough unless I stored the allocation method in a header of the object, which I also didn't like
+                    the idea of. Realistically, I should probably have requested memory from the pool first, then passed it to a class new with the allocation method for later reference. On top of
+                    this, for proof of concept, I treated memory trackers as its own allocation method, meaning it purposely couldn't be assigned to objects in a pool. In a real program, it should be
+                    valid to do this if the programmer wants to. I was also trying to maintain both debug and release versions of the project which, whilst functional, requires a lot of effort to keep
+                    working as intended, especially with my code structure.. <br /><br />
+
+                    I'm proud of the fact that, with 5000 objects, the CPU update time of my latest version (1.545ms) is generally faster than the original program was with only 100 objects (1.606ms).
+                    It's important to consider, though, that for one, an average is only as reliable as the frames it ran on. There could be instances of running those same tests where it's slower or
+                    faster, but taking numerous re-runs of an average is usually a good indication of whether it's right or not. Secondly, and more importantly, my program is running with 10 kernel threads
+                    here to split out the work. On a computer that doesn't have 10 cores for this, it's going to have to time splice those threads, or, in the case of my program specifically, it will default
+                    to the number of cores the computer actually has. This means that we could end up in situations where, like the original, a single thread is trying to handle all of the work. The spatial partition
+                    will still be valuable, but now each cell will need to be handled synchronously, with the locking logic still needlessly adding overhead, potentially multiplying the time taken. Moving on, when
+                    comparing the speed between the final and original versions with 100 objects, the time has reduced from 1.606ms to 0.087ms - that means it's taking about 5.4% of the original time to finish the
+                    update. When comparing with much larger object numbers, it drops from 585ms to 1.545ms - taking about 0.2% of the original time, showing a non-linear relationship in at least one of the versions
+                    between object number and time taken. These timings are also the difference of about 2 frames per second and 650 frames per second (not including rendering). As a bonus piece of data, release mode
+                    in mine takes 0.707ms with 5000 objects, just less than half of the time that debug takes. I'm very happy with this, and would call the overall project a success.
+                </p>
+
+            </div>
+        </section>
+
+    </div>
+
+    <!-- Footer -->
+    <div id="footer">
+
+        <!-- Copyright -->
+        <ul class="copyright">
+            <li>&copy; Kieran Marsden. All rights reserved.</li>
+            <li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
+        </ul>
+
+    </div>
+
+    <!-- Scripts -->
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/jquery.scrolly.min.js"></script>
+    <script src="assets/js/jquery.scrollex.min.js"></script>
+    <script src="assets/js/browser.min.js"></script>
+    <script src="assets/js/breakpoints.min.js"></script>
+    <script src="assets/js/util.js"></script>
+    <script src="assets/js/main.js"></script>
+
+</body>
+</html>
