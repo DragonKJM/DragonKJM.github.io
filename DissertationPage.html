@@ -2,7 +2,7 @@
 
 <html>
 <head>
-    <title>Kieran's Portfolio - LLPO</title>
+    <title>Kieran's Portfolio - Dissertation</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
     <link rel="stylesheet" href="assets/css/main.css" />
@@ -55,7 +55,7 @@
             <div class="container">
 
                 <header class="item">
-                    <h2>Low Level Platform Optimisation</h2>
+                    <h2>ChronoPhos - Forward vs Deferred vs Forward+ 2.5D</h2>
                 </header>
 
                 <header>
@@ -68,7 +68,7 @@
 
                         <article class="video">
                             <iframe
-                                    src="https://www.youtube.com/embed/0vX_YmmsqUE" title="Low-Level Platform Optimisation Demo"
+                                    src="https://www.youtube.com/embed/bfEMt644Rxc" title="Dissertation Demo"
                                     frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                                     referrerpolicy="strict-origin-when-cross-origin" allowfullscreen>
                             </iframe>
@@ -90,36 +90,52 @@
                 </header>
 
                 <p>
-                    This is a low-level memory tracking and allocation program, which was also ported to the PS5. It focuses on optimisation of basic physics resolution via spatial partitioning, safe threading, and cache reuse.
-                    I also used it for experimentation between different pooling methods, heap walking, and iterating through the use of profiling tools.
+                    This is ChronoPhos, my dissertation project. It was used to compare Forward, Deferred, and Forward+ 2.5D in Sponza,
+                    with a scaling number of point lights.
                 </p>
 
                 <p><strong><u>Features:</u></strong></p>
 
                 <ul class="CentredList">
-                    <li>Job-based threading</li>
-                    <li>Memory tracking, pooling, and corruption detection</li>
-                    <li>Hybrid allocation (per-frame vs permanent pools)</li>
-                    <li>Cache-friendly data layouts and access patterns</li>
+                    <li>Forward, Deferred and adjustable Forward+ 2.5D</li>
+                    <li>Texture caching</li>
+                    <li>Reversed Z-buffer</li>
+                    <li>GPU-Queried Timing Data</li>
                 </ul>
 
-                <p><strong><u>Project Analysis and Conclusion:</u></strong></p>
+                <p><strong><u>More Info:</u></strong></p>
 
                 <p>
-                    This project was extremely useful for learning and applying optimisation techniques that are hard to experiment with in large codebases. It helped me understand memory management,
-                    caching, spatial partitioning, threading, and how manual allocation and data locality can significantly reduce cache misses and improve performance. <br /><br />
+                    This is my dissertation piece, which I used to measure the relative timings of Forward, Deferred and Forward+ 2.5D in Cryotek's Sponza, with a scaling light count. I also used it as a means
+                    of additional learning, such as including normal mapping, compute shaders, a reversed depth buffer for accuracy, build events, and manual GPU timing, amongst others. <br /><br />
 
-                    I’m particularly happy with the gridding system, where cells manage object movement themselves instead of reassigning all objects every frame, avoiding a costly full iteration.
-                    While this requires mutex locking due to threading, the overhead is outweighed by the saved work, and I avoided more complex structures like quadtrees due to their dynamic
-                    nature and poor thread workload predictability. <br /><br />
+                    Forward+ 2.5D is an extension of Forward+ which takes depth tiling into account, based on the use of bit masks to discard geometry. It rivals Clustered Forward+, though the artefact
+                    does unfortunately not compare the two due to time scopes - this is a point of further development. In this artefact, tile size, the number of depth tiles, and number of allowed lights
+                    per tile is configurable. <br /><br />
 
-                    The pooling system works but isn’t designed as cleanly as I’d like, with objects requesting pool access themselves and falling back to heap allocation when needed. A better
-                    approach would be allocating from the pool first and passing that memory into object construction, while also unifying memory tracking and reducing the maintenance burden
-                    between debug and release builds. <br /><br />
+                    The results of the experiments showed that Forward+ 2.5D, on average, was the best of the tested pipeline methods. However, Forward was better at lower light counts due to the baseline
+                    cost of both of the other methods. Deferred acted as a mid-point option between the two. Below are the results:
 
-                    Performance-wise, the final version with 5000 objects is faster than the original with only 100, showing massive non-linear gains from optimisation and parallelism.
-                    While results depend on the number of objects and threads, comparisons show reductions down to 0.2–5.4% of the original update time, with release builds reducing
-                    the frame time even further, making the project a clear success.
+                </p>
+
+                <article class="image">
+                    <img src="images/DissertationData.jpg" />
+                </article>
+
+                <p>
+                    To test and observe Forward+ 2.5D functioning, I also made a debugger which shows the light occupancy of each pixel, based on the maximum allowed number of lights per tile.
+                    Green -> red means more lights were accumulated within a pixel, whilst the blue lines show the tiles. Below is what it looks like with 512 lights, with a 16 light maximum:
+
+                </p>
+
+                <article class="image">
+                    <img src="images/DissertationDebugger.png" />
+                </article>
+
+
+                <p>
+                    Feel free to ask me anything more about this project!
+
                 </p>
 
             </div>

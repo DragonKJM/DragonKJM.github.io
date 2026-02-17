@@ -2,7 +2,7 @@
 
 <html>
 <head>
-    <title>Kieran's Portfolio - LLPO</title>
+    <title>Kieran's Portfolio - PostFX</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
     <link rel="stylesheet" href="assets/css/main.css" />
@@ -55,7 +55,7 @@
             <div class="container">
 
                 <header class="item">
-                    <h2>Low Level Platform Optimisation</h2>
+                    <h2>PostFX and Deferred Lighting</h2>
                 </header>
 
                 <header>
@@ -68,7 +68,7 @@
 
                         <article class="video">
                             <iframe
-                                    src="https://www.youtube.com/embed/0vX_YmmsqUE" title="Low-Level Platform Optimisation Demo"
+                                    src="https://www.youtube.com/embed/0Mt9rZeGRWQ" title="Advanced Graphics Video"
                                     frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                                     referrerpolicy="strict-origin-when-cross-origin" allowfullscreen>
                             </iframe>
@@ -90,36 +90,33 @@
                 </header>
 
                 <p>
-                    This is a low-level memory tracking and allocation program, which was also ported to the PS5. It focuses on optimisation of basic physics resolution via spatial partitioning, safe threading, and cache reuse.
-                    I also used it for experimentation between different pooling methods, heap walking, and iterating through the use of profiling tools.
+                    This is a DirectX11 program mainly focussing on Deferred Lighting, a 3-phase deferred pipeline, and post effects. It also includes normal mapping, ImGUI, and some render target debugging.
                 </p>
 
                 <p><strong><u>Features:</u></strong></p>
 
                 <ul class="CentredList">
-                    <li>Job-based threading</li>
-                    <li>Memory tracking, pooling, and corruption detection</li>
-                    <li>Hybrid allocation (per-frame vs permanent pools)</li>
-                    <li>Cache-friendly data layouts and access patterns</li>
+                    <li>3-Phase Deferred Lighting</li>
+                    <li>Gaussian Depth of Field Blur, and other smaller post effects</li>
+                    <li>RT debug views</li>
+                    <li>Normal Mapping</li>
                 </ul>
 
-                <p><strong><u>Project Analysis and Conclusion:</u></strong></p>
+                <p><strong><u>More Info:</u></strong></p>
 
                 <p>
-                    This project was extremely useful for learning and applying optimisation techniques that are hard to experiment with in large codebases. It helped me understand memory management,
-                    caching, spatial partitioning, threading, and how manual allocation and data locality can significantly reduce cache misses and improve performance. <br /><br />
+                    The main focus of this project was its deferred system, and its post effects. It also served as a means of using ImGUI for the first time. <br /><br />
 
-                    I’m particularly happy with the gridding system, where cells manage object movement themselves instead of reassigning all objects every frame, avoiding a costly full iteration.
-                    While this requires mutex locking due to threading, the overhead is outweighed by the saved work, and I avoided more complex structures like quadtrees due to their dynamic
-                    nature and poor thread workload predictability. <br /><br />
+                    The 3-phase deferred system, called deferred lighting, is an alternative to the typically known 2-phase deferred 'shading' pipeline. In this pipeline, rather than writing all material
+                    properties to g-buffers in the first pass, the first pass instead creates buffers for the minimal lighting information - this can be as little as a normals view with position reconstruction.
+                    Then, the second phase calculates all the lighting, whilst the final phase redraws the geometry to bring in the additional colour and material information into the scene. It's more modular
+                    and configurable than deferred shading, but has the drawback of having to draw geometry twice. <br /><br />
 
-                    The pooling system works but isn’t designed as cleanly as I’d like, with objects requesting pool access themselves and falling back to heap allocation when needed. A better
-                    approach would be allocating from the pool first and passing that memory into object construction, while also unifying memory tracking and reducing the maintenance burden
-                    between debug and release builds. <br /><br />
+                    The main post effect here is the depth of field gaussian blur. This is a gaussian blur effect, that is a two-pass blur merging adjacent and vertical pixels, combined with depth features
+                    such as a focal point and a circle of confusion to determine where this effect is applied. Additional effects include colour tinting and debug views being rendered to the screen,
+                    as seen on the right. These views show, of the cube, the world positions, normals, the calculated diffuse and the specular lighting, in that order. <br /><br />
 
-                    Performance-wise, the final version with 5000 objects is faster than the original with only 100, showing massive non-linear gains from optimisation and parallelism.
-                    While results depend on the number of objects and threads, comparisons show reductions down to 0.2–5.4% of the original update time, with release builds reducing
-                    the frame time even further, making the project a clear success.
+                    Feel free to ask me anything more about this project!
                 </p>
 
             </div>
